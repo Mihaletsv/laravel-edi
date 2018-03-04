@@ -1,0 +1,39 @@
+body {
+    min-height: 75rem; /* Can be removed; just added for demo purposes */
+}
+
+.ts30 {
+    font-size: 30px !important;
+    font-weight: 200;
+}
+.sbold {
+    font-weight: 900;
+}
+footer {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+footer p {
+    margin-bottom: .25rem;
+}
+.menu:hover {
+    background-color: #5cb85c;
+   /* background-color: #3c763d;*/
+}
+.menu {
+    cursor:pointer;
+}
+.navbar-menu {
+    margin-top:80px;
+    margin-left:30px;
+    width: 250px;
+}
+.fcol {
+    cursor:pointer;
+    font-weight:bold;
+    min-width: 220px !important;
+}
+.lcol {
+width: 220px !important;
+}

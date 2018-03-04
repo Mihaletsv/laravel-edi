@@ -1,0 +1,19 @@
+body {
+    min-height: 75rem; /* Can be removed; just added for demo purposes */
+}
+
+.ts30 {
+    font-size: 30px !important;
+    font-weight: 200;
+}
+.sbold {
+    font-weight: 900;
+}
+footer {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+footer p {
+    margin-bottom: .25rem;
+}
