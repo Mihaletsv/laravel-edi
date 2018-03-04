@@ -63,7 +63,7 @@
                             </li>
                             <li>
                                 <a href="#" class="list-group-item" data-fileid="{{$fileid}}">Доступен</a>
-                                <div class="row hide" style="min-height: 200px;"><h6 style="margin-top: 100px">Доcтупен только автору</h6></div>
+                                <div class="row hide accessList" id="accessList" style="min-height: 200px;"><h6 style="margin-top: 100px">Доcтупен только автору</h6></div>
                             </li>
                         </ul>
                             </div>

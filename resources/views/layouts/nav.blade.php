@@ -88,24 +88,29 @@
                 })
             }
             $( '.list-group-item' ).click(function(e) {
-
                 var div_id = $(this).next();
                 if (div_id.hasClass('hide')) {
-                    var fileid = $(this).data('fileid');
-                    $.ajax({
-                    url: '{{route('getaccess')}}',
-                    method: 'POST',
-                    data: {'fileid': fileid, '_token': $('meta[name="csrf-token"]').attr('content')},
-                    dataType: 'json',
-                    success: function(data)
-                    {
-                        alert(data[0].varUser);
-                    },
-                    error: function(msg){
-                        console.log(msg);
+                    if (div_id.hasClass('accessList')) {
+                        $('#accessList h6').remove();
+                        var fileid = $(this).data('fileid');
+                        $.ajax({
+                            url: '{{route('getaccess')}}',
+                            method: 'POST',
+                            data: {'fileid': fileid, '_token': $('meta[name="csrf-token"]').attr('content')},
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        $('#accessList').append('<h6>' + data[i].varUser + ' (' + data[i].varUserEmail + ')</h6>');
+                                    }
+                                }
+                            },
+                            error: function (msg) {
+                                console.log(msg);
+                            }
+                        });
                     }
-                });
-                    $(div_id).removeClass('hide');
+                    $(div_id).removeClass('hide')
 
                 }
                 else
