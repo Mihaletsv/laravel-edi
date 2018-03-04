@@ -20,6 +20,7 @@ Route::get('/', function () {;
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/home/uploadfile','FileHandlerController@onuploadfile')->name('uploadfile');
+Route::get('/home/downloadfile/{fileid}','FileHandlerController@ondownloadfile')->name('downloadfile');
 Route::get('/home/uploadfile', function () {
     return redirect()->route('home');
 });

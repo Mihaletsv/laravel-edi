@@ -47,6 +47,10 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h3 class="panel-title">
+                                <a href="{{ route('downloadfile',['fileid'=> $fileid]) }}" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-send"></i>
+                                    Скачать</a>
+                                <a href="#" onclick="clearMyModel()" class="btn btn-sm btn-success">
+                                    Подписать</a>
                                 <a href="#myModal" onclick="clearMyModel()" class="btn btn-sm btn-success" data-toggle="modal">
                                     Отправить</a>
                             </h3>

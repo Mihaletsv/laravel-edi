@@ -17,9 +17,6 @@ class FileHandlerController extends HomeController
         return redirect('home');
     }
 
-    public function onDownloadFile(Request $request)  {
-
-    }
 
     public function onBrowseFile($fileid)  {
         $file_data = $this->filesTable->getDocById($fileid);
@@ -47,9 +44,32 @@ class FileHandlerController extends HomeController
 
 }
 
+    public function onDownloadFile($fileid)
+    {
+        $noaccess = false;
+        if (!empty($noaccess)) {
+            echo "У Вас нет прав на загрузку этого файла. Обратитесь к его владельцу";
+            exit();
+        }
+        $result = $this->filesTable->getDocById($fileid)->toArray();
+        if (count($result) == 0) {
+            header("HTTP/1.0 404 Not Found");
+        }
+        $fileContentDecoded = base64_decode($result['varFileBody']);
+        $fileName = $result['varFileName'];
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename=' . $fileName);
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+        echo $fileContentDecoded;
+        die;
+    }
+
     private function getFileExt($filename)
     {
         $temp = explode('.', $filename);
         return strtolower(end($temp));
     }
+
 }
