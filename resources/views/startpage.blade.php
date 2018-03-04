@@ -2,11 +2,14 @@
 @section('content')
         <div class="container text-center">
             <div class="jumbotron">
-                <h1 class="ts30">Вас приветствует <span class="ts30 sbold">DocsignEx</span> - сервис для обмена документами с возможностью подписи</h1>
+                <h1 class="ts30">Вас приветствует
+                    <span class="ts30 sbold">DocsignEx</span>
+                    - сервис для обмена документами с возможностью подписи</h1>
                 <p>Здесь Вы можете хранить и подписывать свои документы и предоставлять клиентам доступ к ним.</p>
                 <p>
                 @auth
-                    <form name="uploadFile" class="form-horizontal" method="POST" action="{{ route('uploadfile') }}"  enctype="multipart/form-data">
+                    <form name="uploadFile" class="form-horizontal" method="POST" action="{{ route('uploadfile') }}"
+                          enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <a class="btn btn-lg btn-primary" onclick="fileUp()" role="button">Загрузить файл</a>
                         <input class="hide" id="file_upload" type="file" name="file_upload" onchange="uploadFile.submit();">
@@ -26,8 +29,8 @@
                                                     <label for="email" class="col-md-4 control-label">E-Mail Адрес</label>
 
                                                     <div class="col-md-6">
-                                                        <input id="email" type="email" class="form-control" name="email" value="" required="" autofocus="">
-
+                                                        <input id="email" type="email" class="form-control" name="email" value=""
+                                                               required="" autofocus="">
                                                     </div>
                                                 </div>
 
@@ -35,8 +38,8 @@
                                                     <label for="password" class="col-md-4 control-label">Пароль</label>
 
                                                     <div class="col-md-6">
-                                                        <input id="password" type="password" class="form-control" name="password" required="">
-
+                                                        <input id="password" type="password" class="form-control" name="password"
+                                                               required="">
                                                     </div>
                                                 </div>
 

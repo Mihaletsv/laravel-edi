@@ -26,8 +26,8 @@ Route::get('/home/uploadfile', function () {
 Route::get('/home/doc/getaccess', function () {
     return redirect()->route('home');
 });
-Route::get('/home/doc/{fileid}','DocFileController@index')->name('displaydoc');
+Route::get('/home/doc/{fileid}','FileController@index')->name('displaydoc');
 Route::get('/home/doc/{fileid}/browse/true','FileHandlerController@onbrowsefile')->name('browsefile');
-Route::post('/home/outbox', 'UserDocController@onsenddoc')->name('senddoc');
-Route::get('/home/userdocs/{type}', 'UserDocController@index')->name('userdocs');
-Route::post('/home/doc/getaccess', 'UserDocController@ongetaccess')->name('getaccess');
+Route::post('/home/outbox', 'DocController@onsenddoc')->name('senddoc');
+Route::get('/home/docs/{type}', 'DocController@index')->name('docs');
+Route::post('/home/doc/getaccess', 'DocController@ongetaccess')->name('getaccess');

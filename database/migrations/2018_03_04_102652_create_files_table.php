@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserDocTable extends Migration
+class CreateFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateUserDocTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_docs', function (Blueprint $table) {
+        Schema::create('files', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('intFileId');
-            $table->integer('intSenderId');
-            $table->integer('intRecipientId');
-            $table->string('varDocName')->nullable()->default(null);;
-            $table->integer('intDocSignId')->nullable()->default(null);
+            $table->integer('intOwnerId');
+            $table->string('varFileName');
+            $table->binary('varFileBody');
+            $table->tinyInteger('intSign')->default(0);
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateUserDocTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_doc');
+        Schema::dropIfExists('files');
     }
 }

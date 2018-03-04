@@ -8,7 +8,6 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
-
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
@@ -16,7 +15,6 @@
     <title>DocsignEx</title>
 </head>
 <body>
-<!-- Fixed navbar -->
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -67,13 +65,10 @@
                         </li>
                         @endguest
             </ul>
-        </div><!--/.nav-collapse -->
+        </div>
     </div>
 </div>
 @yield('content')
-<!-- Bootstrap core JavaScript
-        ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="/js/app.js"></script>
         <script>
             function fileUp() {
@@ -92,19 +87,8 @@
                     }
                 })
             }
-/*            $( '.list-group-item' ).click(function(e) {
-                e.preventDefault;
-                var div_id = $(this).next();
-                if (div_id.hasClass('hide')) {
-                    $(div_id).removeClass('hide');
-                }
-                else
-                {
-                    $(div_id).addClass('hide');
-                }
-            });*/
+            $( '.list-group-item' ).click(function(e) {
 
-/*            $( '.list-group-item' ).click(function(e) {
                 var div_id = $(this).next();
                 if (div_id.hasClass('hide')) {
                     var fileid = $(this).data('fileid');
@@ -128,7 +112,7 @@
                 {
                     $(div_id).addClass('hide');
                 }
-            });*/
+            });
 
             $('.btnaddrec').click(function () {
                 var elem_id = $('#recDivRows .input-group:last');
@@ -141,8 +125,6 @@
                 function(){ $(this).addClass('active') },
                 function(){ $(this).removeClass('active') }
             )
-/*
-            $('.addrec').autocomplete({source: availableTags});*/
         </script>
 
 </body>

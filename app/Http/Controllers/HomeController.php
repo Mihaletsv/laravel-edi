@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\DocFile;
-use App\UserDoc;
+use App\File;
+use App\Doc;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -20,7 +20,7 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->docfilesTable = new DocFile();
+        $this->filesTable = new File();
 
     }
 
@@ -34,7 +34,7 @@ class HomeController extends Controller
         if (Auth::check())
         {
             $this->currentUser = Auth::user()->toArray();
-            $this->docs = $this->docfilesTable->getDocsData($this->currentUser['id'])->toArray();
+            $this->docs = $this->filesTable->getDocsData($this->currentUser['id'])->toArray();
 
         }
         return view('home',['docs'=>$this->docs, 'currentUser'=>$this->currentUser]);

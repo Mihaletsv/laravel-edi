@@ -10,10 +10,10 @@ class FileHandlerController extends HomeController
         $file = $request->file('file_upload');
         $fileName = $file->getClientOriginalName();
         $fileBody = file_get_contents($file->getRealPath());
-        $this->docfilesTable->intOwnerId = Auth::id();
-        $this->docfilesTable->varFileName = $fileName;
-        $this->docfilesTable->varFileBody = base64_encode($fileBody);
-        $this->docfilesTable->save();
+        $this->filesTable->intOwnerId = Auth::id();
+        $this->filesTable->varFileName = $fileName;
+        $this->filesTable->varFileBody = base64_encode($fileBody);
+        $this->filesTable->save();
         return redirect('home');
     }
 
@@ -22,7 +22,7 @@ class FileHandlerController extends HomeController
     }
 
     public function onBrowseFile($fileid)  {
-        $file_data = $this->docfilesTable->getDocById($fileid);
+        $file_data = $this->filesTable->getDocById($fileid);
         if (empty($file_data)) {
             echo "File not found";
         }
@@ -50,7 +50,6 @@ class FileHandlerController extends HomeController
     private function getFileExt($filename)
     {
         $temp = explode('.', $filename);
-
         return strtolower(end($temp));
     }
 }

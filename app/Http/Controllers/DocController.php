@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\DocFile;
+use App\File;
 use Illuminate\Http\Request;
 use App\User;
-use App\UserDoc;
+use App\Doc;
 use Auth;
-class UserDocController extends Controller
+class DocController extends Controller
 {
     public static $currUserTypes = [
         'inbox'=>'Recipient',
@@ -17,12 +17,12 @@ class UserDocController extends Controller
         'inbox'=>'Sender',
         'outbox'=>'Recipient'
     ];
-    protected $docfilesTable;
+    protected $filesTable;
 
     public function __construct()
     {
-        $this->docfilesTable = new DocFile();
-        $this->userDocTable = new UserDoc();
+        $this->filesTable = new File();
+        $this->docTable = new Doc();
         $this->middleware('auth');
 
     }
@@ -37,7 +37,7 @@ class UserDocController extends Controller
 
         if (Auth::check())
         {
-            $this->docs = $this->userDocTable->getDocsData(Auth::id(), self::$currUserTypes[$type],self::$searchUserTypes[$type])->toArray();
+            $this->docs = $this->docTable->getDocsData(Auth::id(), self::$currUserTypes[$type],self::$searchUserTypes[$type])->toArray();
             //$this->prepareDocsData($this->docs, Auth::user(),$type);
         }
 
@@ -61,12 +61,12 @@ class UserDocController extends Controller
         $data_row['intFileId'] = $docs['fileid'];
         $data_row['intSenderId'] = Auth::id();
         $data_row['intRecipientId'] = $rec_id['id'];
-        $data_row['varDocName'] = $this->docfilesTable->getDocById($docs['fileid'])->toArray()['varFileName'];
+        $data_row['varDocName'] = $this->filesTable->getDocById($docs['fileid'])->toArray()['varFileName'];
         $data_row['created_at'] = date('Y-m-d H:i:s', time());
         $data_insert[] = $data_row;
     }
-       $result = UserDoc::insert($data_insert);
-       return redirect('home/userdocs/outbox');
+       $result = Doc::insert($data_insert);
+       return redirect('home/docs/outbox');
    }
 
 
@@ -74,7 +74,7 @@ class UserDocController extends Controller
     {
         if($request->ajax()) {
             $fileid = $request->all()['fileid'];
-            $users_access_data = $this->userDocTable->getUsersAccess($fileid)->toArray();
+            $users_access_data = $this->docTable->getUsersAccess($fileid)->toArray();
             echo json_encode($users_access_data);
             //die;
         }

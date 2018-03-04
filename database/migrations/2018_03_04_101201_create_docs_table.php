@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDocFilesTable extends Migration
+class CreateDocsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class CreateDocFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('doc_files', function (Blueprint $table) {
+        Schema::create('docs', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('intOwnerId');
-            $table->string('varFileName');
-            $table->binary('varFileBody');
-            $table->tinyInteger('intSign')->default(0);
+            $table->integer('intFileId');
+            $table->integer('intSenderId');
+            $table->integer('intRecipientId');
+            $table->string('varDocName')->nullable()->default(null);;
+            $table->integer('intDocSignId')->nullable()->default(null);
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
@@ -31,6 +31,6 @@ class CreateDocFilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('doc_files');
+        Schema::dropIfExists('docs');
     }
 }
