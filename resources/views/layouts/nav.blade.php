@@ -70,6 +70,11 @@
 </div>
 @yield('content')
 <script src="/js/app.js"></script>
+<script src="/js/signCertificate.js"></script>
+<script src="/js/CryptoApplet/CryptoAppletInit.js"></script>
+<script src="/js/CryptoApplet/CryptoProModule.js"></script>
+<script src="/js/CryptoApplet/CryptoProAsync.js"></script>
+<script src="/js/CryptoApplet/CryptoProAPI.js"></script>
         <script>
             function fileUp() {
                 $('#file_upload').trigger('click');
@@ -87,6 +92,17 @@
                     }
                 })
             }
+            $( '#signButton' ).click(function(e) {
+                var div_id = $('#certificate');
+                if (div_id.hasClass('hide')) {
+                    $(div_id).removeClass('hide');
+                    setTimeout('FillCertificateList()', 1000);
+                }
+                else
+                {
+                    $(div_id).addClass('hide');
+                }
+            });
             $( '.list-group-item' ).click(function(e) {
                 var div_id = $(this).next();
                 if (div_id.hasClass('hide')) {
@@ -104,13 +120,17 @@
                                         $('#accessList').append('<h6>' + data[i].varUser + ' (' + data[i].varUserEmail + ')</h6>');
                                     }
                                 }
+                                else
+                                {
+                                    $('#accessList').append('<h6 style="margin-top: 100px">Доcтупен только автору</h6>');
+                                }
                             },
                             error: function (msg) {
                                 console.log(msg);
                             }
                         });
                     }
-                    $(div_id).removeClass('hide')
+                    $(div_id).removeClass('hide');
 
                 }
                 else
@@ -130,6 +150,33 @@
                 function(){ $(this).addClass('active') },
                 function(){ $(this).removeClass('active') }
             )
+
+            function getCertExpInfo(cert_selector)
+            {
+                var selector_object = $(cert_selector.options[cert_selector.selectedIndex]);
+                var certData = selector_object.data('certData'); //Get certData array from selector object
+
+                if (typeof certData == 'undefined') return;
+                var expDate = new Date(certData.expireDate);
+                var currDate = new Date();
+
+                var due = new Date(expDate - currDate),
+                    dueYear = expDate.getFullYear() - currDate.getFullYear(),
+                    dueMonth = due.getMonth(),
+                    dueDay = due.getDate();
+
+                if (dueYear > 0 && ((expDate.getMonth() - currDate.getMonth()) > 0) || dueYear > 0 && ((expDate.getMonth() - currDate.getMonth()) == 0) && ((expDate.getDate() - currDate.getDate()) > 0)) {
+                    var moreThanYear = true;
+                }
+
+                var certExpDays = $(cert_selector).closest('div').find('#certExpDays')[0];
+                if (certExpDays && !dueMonth) {
+                    certExpDays.innerHTML = 'Срок действия сертификата истекает через ' + (moreThanYear ? dueYear + ' год ' : '') + (dueMonth ? dueMonth + ' месяцев ' : '') + dueDay + ' дней. Обратитесь в ваш удостоверяющий центр для продления сертификата.';
+                } else if (certExpDays) {
+                    certExpDays.innerHTML = '';
+                }
+            }
+
         </script>
 
 </body>

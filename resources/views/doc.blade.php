@@ -49,11 +49,19 @@
                             <h3 class="panel-title">
                                 <a href="{{ route('downloadfile',['fileid'=> $fileid]) }}" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-send"></i>
                                     Скачать</a>
-                                <a href="#" onclick="clearMyModel()" class="btn btn-sm btn-success">
-                                    Подписать</a>
+                                <a href="#" id="signButton" class="btn btn-sm btn-success">
+                                    Подпись</a>
                                 <a href="#myModal" onclick="clearMyModel()" class="btn btn-sm btn-success" data-toggle="modal">
                                     Отправить</a>
                             </h3>
+                        </div>
+                        <div class="panel-body hide" id="certificate">
+                            Cертификат:
+                                    <select style="width: 460px;" id="cert_selector_0" class="cert_selector" onchange="getCertExpInfo(this)" defaultthumb="">
+                                        </select>
+                            <a href="#" class="btn btn-sm btn-success">
+                                Подписать</a>
+                            <span id="certExpDays"></span>
                         </div>
                         <div class="panel-body">
                             <iframe src="{{ route('browsefile',['fileid'=> $fileid]) }}" width="66%" height="500" seamless
