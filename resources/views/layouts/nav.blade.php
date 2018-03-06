@@ -75,7 +75,13 @@
 <script src="/js/CryptoApplet/CryptoProModule.js"></script>
 <script src="/js/CryptoApplet/CryptoProAsync.js"></script>
 <script src="/js/CryptoApplet/CryptoProAPI.js"></script>
-        <script>
+
+
+
+
+
+
+<script>
             function fileUp() {
                 $('#file_upload').trigger('click');
             }

@@ -16,6 +16,6 @@ class Doc extends Model
     {
         return self::select('users.name as varUser','users.email as varUserEmail')->
         leftJoin('users', 'users.id', '=', 'docs.intRecipientId')->
-        where('intFileId',$fileid)->groupBy('users.id')->get();
+        where('intFileId',$fileid)->groupBy('users.id')->get()->toArray();
     }
 }

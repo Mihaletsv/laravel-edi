@@ -33,8 +33,8 @@ class HomeController extends Controller
     {
         if (Auth::check())
         {
-            $this->currentUser = Auth::user()->toArray();
-            $this->docs = $this->filesTable->getDocsData($this->currentUser['id'])->toArray();
+            $this->currentUser = Auth::user();
+            $this->docs = $this->filesTable->getDocsData($this->currentUser['id']);
 
         }
         return view('home',['docs'=>$this->docs, 'currentUser'=>$this->currentUser]);

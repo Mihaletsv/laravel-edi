@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Doc;
 use Auth;
+use Validator;
 class DocController extends Controller
 {
     public static $currUserTypes = [
@@ -17,12 +18,12 @@ class DocController extends Controller
         'inbox'=>'Sender',
         'outbox'=>'Recipient'
     ];
-    protected $filesTable;
+    protected $filesTable, $docsTable;
 
     public function __construct()
     {
         $this->filesTable = new File();
-        $this->docTable = new Doc();
+        $this->docsTable = new Doc();
         $this->middleware('auth');
 
     }
@@ -37,7 +38,7 @@ class DocController extends Controller
 
         if (Auth::check())
         {
-            $this->docs = $this->docTable->getDocsData(Auth::id(), self::$currUserTypes[$type],self::$searchUserTypes[$type])->toArray();
+            $this->docs = $this->docsTable->getDocsData(Auth::id(), self::$currUserTypes[$type],self::$searchUserTypes[$type]);
             //$this->prepareDocsData($this->docs, Auth::user(),$type);
         }
 
@@ -45,12 +46,34 @@ class DocController extends Controller
     }
 
    public function onSendDoc(Request $request) {
+/*       $order = [
+           'title' => 'Wii U',
+           'description' => 'Game console from Nintendo'
+       ];*/
+      // dd($request->all());
+       $rules = ['rec'=>'required|email'];
+
+
     $usersTable = new User();
     $docs = $request->all();
     if (empty($docs['fileid'])) {
         echo 'Error';
     }
+
     if (isset($docs['recipient'])) {
+        foreach ($docs['recipient'] as $k=>$rec)
+        {
+            $check['rec'] = $rec;
+            //$this->validate($check, $rules);
+
+/*            $validator = Validator::make($check, $rules);
+            if ($validator->fails())
+            {
+                dd($validator->messages()); // validation errors array
+            }*/
+        }
+
+
         $docs['recipient'] = array_diff($docs['recipient'], ['']);
         $recipient_ids = $usersTable->getUserIdByMail($docs['recipient'])->toArray();
     }
@@ -61,11 +84,11 @@ class DocController extends Controller
         $data_row['intFileId'] = $docs['fileid'];
         $data_row['intSenderId'] = Auth::id();
         $data_row['intRecipientId'] = $rec_id['id'];
-        $data_row['varDocName'] = $this->filesTable->getDocById($docs['fileid'])->toArray()['varFileName'];
+        $data_row['varDocName'] = $this->filesTable->getDocById($docs['fileid'])['varFileName'];
         $data_row['created_at'] = date('Y-m-d H:i:s', time());
         $data_insert[] = $data_row;
     }
-       $result = Doc::insert($data_insert);
+       Doc::insert($data_insert);
        return redirect('home/docs/outbox');
    }
 
@@ -74,9 +97,8 @@ class DocController extends Controller
     {
         if($request->ajax()) {
             $fileid = $request->all()['fileid'];
-            $users_access_data = $this->docTable->getUsersAccess($fileid)->toArray();
+            $users_access_data = $this->docsTable->getUsersAccess($fileid);
             echo json_encode($users_access_data);
-            //die;
         }
     }
 

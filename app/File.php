@@ -14,6 +14,6 @@ class File extends Model
 
     public function getDocById($id)
     {
-        return self::find($id);
+        return self::find($id)->toArray();
     }
 }

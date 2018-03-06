@@ -23,10 +23,6 @@ class FileHandlerController extends HomeController
         if (empty($file_data)) {
             echo "File not found";
         }
-        else
-        {
-            $file_data = $file_data->toArray();
-        }
         $fileContent = $file_data['varFileBody'];
         $fileContentDecoded = base64_decode($fileContent);
         unset($fileContent);
