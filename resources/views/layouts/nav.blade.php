@@ -105,12 +105,41 @@
         function clearMyModelAdmin() {
             $('.addrecAdmin').val('');
             $('#recAdminDivRows').children(".input-group").each(function (i) {
-            if (i > 0)
-            {
                 this.remove();
+            });
+            var file_id = $('#file_id').val();
+            $.ajax({
+                url: '{{route('getadmins')}}',
+                method: 'POST',
+                data: {'file_id': file_id, '_token': $('meta[name="csrf-token"]').attr('content')},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            $('#recAdminDivRows').append(
+                                $('#rec_template').html()
+                                    .replace(/%key%/g,
+                                        i));
+                            $('#recAdminDivRows').find("#recipient"+i).val(data[i].email);
+                        }
+                    }
+                    else
+                    {
+                        $('#recAdminDivRows').append(
+                            $('#rec_template').html()
+                                .replace(/%key%/g,
+                                    0));
+                    }
+                },
+                error: function (msg) {
+                    console.log(msg);
+                }
+            });
+
             }
-            })
-            }
+
+
             $( '#signButton' ).click(function(e) {
                 var div_id = $('#certificate');
                 if (div_id.hasClass('hide')) {

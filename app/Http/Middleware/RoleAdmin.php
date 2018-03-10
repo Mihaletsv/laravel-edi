@@ -24,7 +24,8 @@ class RoleAdmin
               $noaccess = true;
               foreach ($file->roles as $admin)
               {
-                  if ($cur_user_id == $admin->pivot_user_id)
+
+                  if ($cur_user_id == $admin->pivot->user_id)
                   {
                     unset($noaccess);
                     break;

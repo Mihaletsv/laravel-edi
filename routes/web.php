@@ -25,7 +25,7 @@ Route::get('/home/uploadfile', function () {
     return redirect()->route('home');
 });
 Route::get('/home/downloadfile/{file_id}','FileHandlerController@ondownloadfile')->name('downloadfile');
-
+Route::post('/home/doc/getadmins', 'FileController@ongetadmins')->name('getadmins');
 Route::get('/home/doc/{file_id}','FileController@index')->name('displaydoc');
 Route::get('/home/doc/{file_id}/browse/true','FileHandlerController@onbrowsefile')->name('browsefile');
 Route::post('/home/senddoc/{file_id}', 'DocController@onsenddoc')->name('senddoc');

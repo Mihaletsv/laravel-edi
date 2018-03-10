@@ -79,13 +79,4 @@ class DocController extends Controller
             echo json_encode($users_access_data);
         }
     }
-
-
-   private function prepareDocsData (&$docs, $user_data, $type)
-   {
-       foreach ($docs as $key=>$doc)
-       {
-           $docs[$key]['var'.self::$currUserTypes[$type]] = $user_data['name'];
-       }
-   }
 }

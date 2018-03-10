@@ -30,6 +30,8 @@
         </div>
     </div>
 </div>
+
+
 <div id="myModalAdmin" class="modal fade ">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -42,13 +44,6 @@
                 {!! Form::hidden('file_id', "{$file_id}", ['class'=>'hide', 'id'=>'file_id']) !!}
                 <div class="row">
                     <div class="col-xs-12"  id="recAdminDivRows">
-                        <div class="input-group adm">
-                            {!! Form::text('recipient[0]', null, ['class'=>'form-control addrec', 'id'=>'recipient0', 'data-key' => '0']) !!}
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" disabled="disabled">Убрать</button>
-                                </span>
-
-                        </div>
                     </div>
                 </div>
                 {!! Form::close() !!}

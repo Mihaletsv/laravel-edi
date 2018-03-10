@@ -13,7 +13,7 @@
                                 <a href="#myModal" onclick="clearMyModel()" class="btn btn-sm btn-success" data-toggle="modal">
                                     Отправить</a>
                                 <a href="#myModalAdmin" onclick="clearMyModelAdmin()" class="btn btn-sm btn-success" data-toggle="modal">
-                                    Дать доступ</a>
+                                    Администраторы</a>
                             </h3>
                         </div>
                         <div class="panel-body hide" id="certificate">
