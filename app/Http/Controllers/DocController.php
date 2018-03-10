@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\File;
 use Illuminate\Http\Request;
-use App\User;
 use App\Doc;
 use Auth;
 use App\Http\Requests\SendDocRequest;
@@ -27,7 +26,7 @@ class DocController extends Controller
         $this->filesTable = new File();
         $this->docsTable = new Doc();
         $this->middleware('auth');
-        $this->middleware('roleowner', ['only'=>'onsenddoc']);
+        $this->middleware('roleadmin', ['only'=>'onsenddoc']);
 
     }
 
@@ -72,24 +71,6 @@ class DocController extends Controller
        return redirect('home/docs/outbox');
    }
 
-    public function onCreateAccess(SendDocRequest $request) {
-
-        $data_insert = [];
-        $recipient_ids = [];
-        $docs = $request->all();
-        $recipient_ids = DocHelper::getContragentsIds($docs);
-        foreach ($recipient_ids as $k=>$rec_id)
-        {
-            $data_row = [];
-            $data_row['file_id'] = $docs['file_id'];
-            $data_row['user_id'] = $rec_id['id'];
-            $data_row['created_at'] = date('Y-m-d H:i:s', time());
-            $data_insert[] = $data_row;
-        }
-        dd($data_insert);
-       // $this->docsTable->insert($data_insert);
-        return redirect('home/docs/outbox');
-    }
     public function onGetAccess(Request $request)
     {
         if($request->ajax()) {

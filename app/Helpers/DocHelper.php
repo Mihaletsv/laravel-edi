@@ -17,7 +17,7 @@ trait DocHelper
            foreach ($docs['recipient'] as $k => $rec) {
                $check['rec'] = $rec;
            }
-           $docs['recipient'] = array_diff($docs['recipient'], ['']);
+          // $docs['recipient'] = array_diff($docs['recipient'], ['']);
 
            $recipient_ids = $usersTable->getUserIdByMail($docs['recipient']);
        }

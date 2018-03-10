@@ -47,8 +47,13 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function userfiles()
+    public function files()
     {
-        return $this->hasMany('App\File');
+        return $this->hasMany('App\File','user_id');
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany('App\File', 'admin_files');
     }
 }

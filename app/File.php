@@ -38,5 +38,10 @@ class File extends Model
         return $this->hasMany('App\Doc');
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany('App\User', 'admin_files');
+    }
+
 
 }

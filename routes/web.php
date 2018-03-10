@@ -33,7 +33,7 @@ Route::post('/home/doc/getaccess', 'DocController@ongetaccess')->name('getaccess
 Route::get('/home/doc/getaccess', function () {
     return redirect()->route('home');
 });
-Route::post('/home/createaccess/{file_id}', 'DocController@oncreateaccess')->name('createaccess');
+Route::post('/home/createaccess/{file_id}', 'AdminFileController@oncreateadminaccess')->name('createaccess');
 Route::get('/home/createaccess/', function () {
     return redirect()->route('home');
 });
