@@ -10,7 +10,7 @@ class FileHandlerController extends HomeController
         $file = $request->file('file_upload');
         $fileName = $file->getClientOriginalName();
         $fileBody = file_get_contents($file->getRealPath());
-        $this->filesTable->intOwnerId = Auth::id();
+        $this->filesTable->user_id = Auth::id();
         $this->filesTable->varFileName = $fileName;
         $this->filesTable->varFileBody = base64_encode($fileBody);
         $this->filesTable->save();
@@ -18,8 +18,8 @@ class FileHandlerController extends HomeController
     }
 
 
-    public function onBrowseFile($fileid)  {
-        $file_data = $this->filesTable->getDocById($fileid);
+    public function onBrowseFile($file_id)  {
+        $file_data = $this->filesTable->getDocById($file_id);
         if (empty($file_data)) {
             echo "File not found";
         }
@@ -40,19 +40,16 @@ class FileHandlerController extends HomeController
 
 }
 
-    public function onDownloadFile($fileid)
+    public function onDownloadFile($file_id)
     {
         $noaccess = false;
         if (!empty($noaccess)) {
             echo "У Вас нет прав на загрузку этого файла. Обратитесь к его владельцу";
             exit();
         }
-        $result = $this->filesTable->getDocById($fileid)->toArray();
-        if (count($result) == 0) {
-            header("HTTP/1.0 404 Not Found");
-        }
-        $fileContentDecoded = base64_decode($result['varFileBody']);
-        $fileName = $result['varFileName'];
+        $result = $this->filesTable->getDocById($file_id);
+        $fileContentDecoded = base64_decode($result->varFileBody);
+        $fileName = $result->varFileName;
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
             header('Content-Disposition: attachment; filename=' . $fileName);

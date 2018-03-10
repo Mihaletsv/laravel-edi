@@ -19,16 +19,21 @@ Route::get('/', function () {;
 });
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home/docs/{type}', 'DocController@index')->name('docs');
 Route::post('/home/uploadfile','FileHandlerController@onuploadfile')->name('uploadfile');
-Route::get('/home/downloadfile/{fileid}','FileHandlerController@ondownloadfile')->name('downloadfile');
 Route::get('/home/uploadfile', function () {
     return redirect()->route('home');
 });
+Route::get('/home/downloadfile/{file_id}','FileHandlerController@ondownloadfile')->name('downloadfile');
+
+Route::get('/home/doc/{file_id}','FileController@index')->name('displaydoc');
+Route::get('/home/doc/{file_id}/browse/true','FileHandlerController@onbrowsefile')->name('browsefile');
+Route::post('/home/senddoc/{file_id}', 'DocController@onsenddoc')->name('senddoc');
+Route::post('/home/doc/getaccess', 'DocController@ongetaccess')->name('getaccess');
 Route::get('/home/doc/getaccess', function () {
     return redirect()->route('home');
 });
-Route::get('/home/doc/{fileid}','FileController@index')->name('displaydoc');
-Route::get('/home/doc/{fileid}/browse/true','FileHandlerController@onbrowsefile')->name('browsefile');
-Route::post('/home/outbox', 'DocController@onsenddoc')->name('senddoc');
-Route::get('/home/docs/{type}', 'DocController@index')->name('docs');
-Route::post('/home/doc/getaccess', 'DocController@ongetaccess')->name('getaccess');
+Route::post('/home/createaccess/{file_id}', 'DocController@oncreateaccess')->name('createaccess');
+Route::get('/home/createaccess/', function () {
+    return redirect()->route('home');
+});

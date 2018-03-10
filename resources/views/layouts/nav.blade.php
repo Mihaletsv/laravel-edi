@@ -80,8 +80,11 @@
 
 
 
-
+{{--@if($errors->any())
+    $('#myModal').modal("show");
+@endif--}}
 <script>
+
             function fileUp() {
                 $('#file_upload').trigger('click');
             }
@@ -91,12 +94,22 @@
             }
             function clearMyModel() {
                 $('.addrec').val('');
-                $('.input-group').each(function (i) {
-                    if (i > 1)
+                $('#recDivRows').children(".input-group").each(function (i) {
+                    if (i > 0)
                     {
+
                         this.remove();
                     }
                 })
+            }
+        function clearMyModelAdmin() {
+            $('.addrecAdmin').val('');
+            $('#recAdminDivRows').children(".input-group").each(function (i) {
+            if (i > 0)
+            {
+                this.remove();
+            }
+            })
             }
             $( '#signButton' ).click(function(e) {
                 var div_id = $('#certificate');
@@ -114,11 +127,11 @@
                 if (div_id.hasClass('hide')) {
                     if (div_id.hasClass('accessList')) {
                         $('#accessList h6').remove();
-                        var fileid = $(this).data('fileid');
+                        var file_id = $(this).data('file_id');
                         $.ajax({
                             url: '{{route('getaccess')}}',
                             method: 'POST',
-                            data: {'fileid': fileid, '_token': $('meta[name="csrf-token"]').attr('content')},
+                            data: {'file_id': file_id, '_token': $('meta[name="csrf-token"]').attr('content')},
                             dataType: 'json',
                             success: function (data) {
                                 if (data.length > 0) {
@@ -155,9 +168,17 @@
             $('.nav-head').hover(
                 function(){ $(this).addClass('active') },
                 function(){ $(this).removeClass('active') }
-            )
+            );
 
-            function getCertExpInfo(cert_selector)
+            $('.btnaddrecAdmin').click(function () {
+                var elem_id = $('#recAdminDivRows .input-group:last');
+                elem_id.after(
+                    $('#rec_template').html()
+                        .replace(/%key%/g,
+                            elem_id.children('.form-control').data('key') + 1));
+            });
+
+        function getCertExpInfo(cert_selector)
             {
                 var selector_object = $(cert_selector.options[cert_selector.selectedIndex]);
                 var certData = selector_object.data('certData'); //Get certData array from selector object

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+
     use Notifiable;
 
     /**
@@ -29,6 +30,25 @@ class User extends Authenticatable
 
     public function getUserIdByMail($emails)
     {
-        return self::select('id')->wherein('email', $emails)->get();
+        return self::userwithemail($emails)->get();
+    }
+
+    /**
+     * scope function examples
+     * @param $query
+     * @param $emails
+     */
+    public function scopeUserWithEmail($query,$emails)
+    {
+        $query->wherein('email', $emails);
+    }
+
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function userfiles()
+    {
+        return $this->hasMany('App\File');
     }
 }

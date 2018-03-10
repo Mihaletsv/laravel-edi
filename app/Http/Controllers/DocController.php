@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Doc;
 use Auth;
-use Validator;
+use App\Http\Requests\SendDocRequest;
+use App\Helpers\DocHelper;
+
 class DocController extends Controller
 {
     public static $currUserTypes = [
@@ -25,6 +27,7 @@ class DocController extends Controller
         $this->filesTable = new File();
         $this->docsTable = new Doc();
         $this->middleware('auth');
+        $this->middleware('roleowner', ['only'=>'onsenddoc']);
 
     }
 
@@ -45,59 +48,53 @@ class DocController extends Controller
         return view('home',['docs'=>$this->docs, $type=>true]);
     }
 
-   public function onSendDoc(Request $request) {
-/*       $order = [
-           'title' => 'Wii U',
-           'description' => 'Game console from Nintendo'
-       ];*/
-      // dd($request->all());
-       $rules = ['rec'=>'required|email'];
+   public function onSendDoc(SendDocRequest $request) {
 
-
-    $usersTable = new User();
-    $docs = $request->all();
-    if (empty($docs['fileid'])) {
-        echo 'Error';
-    }
-
-    if (isset($docs['recipient'])) {
-        foreach ($docs['recipient'] as $k=>$rec)
-        {
-            $check['rec'] = $rec;
-            //$this->validate($check, $rules);
-
-/*            $validator = Validator::make($check, $rules);
-            if ($validator->fails())
-            {
-                dd($validator->messages()); // validation errors array
-            }*/
-        }
-
-
-        $docs['recipient'] = array_diff($docs['recipient'], ['']);
-        $recipient_ids = $usersTable->getUserIdByMail($docs['recipient'])->toArray();
-    }
+        $data_insert = [];
+        $recipient_ids = [];
+        $docs = $request->all();
+        $recipient_ids = DocHelper::getContragentsIds($docs);
 
     foreach ($recipient_ids as $k=>$rec_id)
     {
         $data_row = [];
-        $data_row['intFileId'] = $docs['fileid'];
+        $data_row['file_id'] = $docs['file_id'];
         $data_row['intSenderId'] = Auth::id();
-        $data_row['intRecipientId'] = $rec_id['id'];
-        $data_row['varDocName'] = $this->filesTable->getDocById($docs['fileid'])['varFileName'];
+        $data_row['intRecipientId'] = $rec_id->id;
+        $data_row['varDocName'] = $this->filesTable->getDocById($docs['file_id'])['varFileName'];
         $data_row['created_at'] = date('Y-m-d H:i:s', time());
         $data_insert[] = $data_row;
     }
-       Doc::insert($data_insert);
+
+    if (!empty($data_insert)) {
+        $this->docsTable->insert($data_insert);
+    }
        return redirect('home/docs/outbox');
    }
 
+    public function onCreateAccess(SendDocRequest $request) {
 
+        $data_insert = [];
+        $recipient_ids = [];
+        $docs = $request->all();
+        $recipient_ids = DocHelper::getContragentsIds($docs);
+        foreach ($recipient_ids as $k=>$rec_id)
+        {
+            $data_row = [];
+            $data_row['file_id'] = $docs['file_id'];
+            $data_row['user_id'] = $rec_id['id'];
+            $data_row['created_at'] = date('Y-m-d H:i:s', time());
+            $data_insert[] = $data_row;
+        }
+        dd($data_insert);
+       // $this->docsTable->insert($data_insert);
+        return redirect('home/docs/outbox');
+    }
     public function onGetAccess(Request $request)
     {
         if($request->ajax()) {
-            $fileid = $request->all()['fileid'];
-            $users_access_data = $this->docsTable->getUsersAccess($fileid);
+            $file_id = $request->all()['file_id'];
+            $users_access_data = $this->docsTable->getUsersAccess($file_id);
             echo json_encode($users_access_data);
         }
     }

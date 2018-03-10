@@ -9,8 +9,10 @@
         "barryvdh/laravel-ide-helper": "^2.4",
         "doctrine/dbal": "^2.5",
         "fideloper/proxy": "~3.3",
+        "illuminate/html": "^5.0",
         "laravel/framework": "5.5.*",
-        "laravel/tinker": "~1.0"
+        "laravel/tinker": "~1.0",
+        "tarampampam/laravel-ide-helper": "^1.0.8"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
@@ -36,6 +38,7 @@
     "extra": {
         "laravel": {
             "dont-discover": [
+                "barryvdh/laravel-ide-helper"
             ]
         }
     },
@@ -48,7 +51,8 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover"
+            "@php artisan package:discover",
+            "@php artisan ide-helper:update"
         ]
     },
     "config": {

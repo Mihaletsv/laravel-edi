@@ -5,13 +5,10 @@
                         </div>
                         <div class="panel-body">
                                 @auth
-                                    <form name="uploadFile" class="form-horizontal" method="POST" action="{{ route('uploadfile') }}"
-                                          enctype="multipart/form-data">
-                                        {{ csrf_field() }}
-                                        <a class="btn btn-lg btn-primary" onclick="fileUp()" role="button">Загрузить файл</a>
-                                        <input class="hide" id="file_upload" type="file" name="file_upload"
-                                               onchange="uploadFile.submit();">
-                                    </form>
+                                {!! Form::open(['route' => 'uploadfile', 'name' => 'uploadFile', 'enctype' => 'multipart/form-data']) !!}
+                                <a class="btn btn-lg btn-primary" onclick="fileUp()" role="button">Загрузить файл</a>
+                                {!! Form::file('file_upload', ['class'=>'hide', 'id'=>'file_upload', 'onchange' => 'uploadFile.submit();']) !!}
+                                {!! Form::close() !!}
                                 @endauth
                         </div>
                         <div class="panel-body menu" onclick="window.location.href='{{route('home')}}'">

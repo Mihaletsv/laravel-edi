@@ -15,7 +15,7 @@ class CreateDocsTable extends Migration
     {
         Schema::create('docs', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('intFileId');
+            $table->integer('file_id');
             $table->integer('intSenderId');
             $table->integer('intRecipientId');
             $table->string('varDocName')->nullable()->default(null);;

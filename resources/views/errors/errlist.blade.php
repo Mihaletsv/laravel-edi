@@ -1,0 +1,1 @@
+@foreach($errors->all() as $err){{$err}}@endforeach

@@ -13,9 +13,9 @@ class FileController extends Controller
         $this->middleware('auth');
     }
 
-    public function index($fileid)
+    public function index($file_id)
     {
-        return view('doc',['fileid'=>$fileid]);
+        return view('doc',['file_id'=>$file_id]);
     }
 
 }
