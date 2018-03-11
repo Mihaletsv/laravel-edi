@@ -35,6 +35,7 @@ class RoleAdmin
         }
         if (isset($noaccess))
         {
+            flash()->error('У вас нет права отправлять этот документ!');
             return redirect()->back();
         }
         return $next($request);

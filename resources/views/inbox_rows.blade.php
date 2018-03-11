@@ -4,6 +4,6 @@
         <td  title="Открыть документ" onclick="window.location.href='{{route('displaydoc',$doc->file_id)}}'; return false"
              class="fcol">{{$doc->varDocName}}</td>
         <td title="Отправитель">{{$doc->varUser}}({{$doc->varUserEmail}})</td>
-        <td  class="lcol" title="дата получения"></a>{{$doc->created_at}}</td>
+        <td  class="lcol" title="дата получения"></a>{{$doc->created_at->format('d.m.Y H:i:s')}}</td>
     </tr>
 @endforeach

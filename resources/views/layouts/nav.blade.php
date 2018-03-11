@@ -15,7 +15,11 @@
     <title>DocsignEx</title>
 </head>
 <body>
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation"  id="navhead">
+    <div class="alert_info_mes">
+        @include('errors.errlist')
+        @include('flash::message')
+    </div>
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -54,7 +58,7 @@
                                     <a href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        Logout
+                                        Выйти
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -84,8 +88,32 @@
     $('#myModal').modal("show");
 @endif--}}
 <script>
+    Notify = {
+        TYPE_INFO: 0,
+        TYPE_SUCCESS: 1,
+        TYPE_WARNING: 2,
+        TYPE_DANGER: 3,
+        generate: function (aText, Type_int) {
+            var lTypeIndexes = [this.TYPE_INFO, this.TYPE_SUCCESS, this.TYPE_WARNING, this.TYPE_DANGER];
+            var ltypes = ['alert-info', 'alert-success', 'alert-warning', 'alert-danger'];
+            var ltype = ltypes[this.TYPE_INFO];
 
-            function fileUp() {
+            if (Type_int !== undefined && lTypeIndexes.indexOf(Type_int) !== -1) {
+                ltype = ltypes[Type_int];
+            }
+            var lText = '';
+            lText += "<p>"+aText+"</p>";
+            var lNotify_e = $("<div class='alert_info_mes alert "+ltype+"'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>"+lText+"</div>");
+            setTimeout(function () {
+                lNotify_e.alert('close');
+            }, 100000);
+            lNotify_e.appendTo($("#navhead"));
+        }
+    };
+
+    //Notify.generate('Текст уведомления', 0);
+$('div.alert').not('.alert-important').delay(3000).slideUp(300);
+function fileUp() {
                 $('#file_upload').trigger('click');
             }
 

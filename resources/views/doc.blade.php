@@ -5,7 +5,7 @@
                 <div class="col-sm-4" style="padding-top:80px; padding-left:300px; width: 100%; min-height: 500px;">
                     <div class="panel panel-success">
                         <div class="panel-heading">
-                            <h3 class="panel-title"> @include('errors.errlist')
+                            <h3 class="panel-title">
                                 <a href="{{ route('downloadfile',['file_id'=> $file_id]) }}" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-send"></i>
                                     Скачать</a>
                                 <a href="#" id="signButton" class="btn btn-sm btn-success">

@@ -29,11 +29,12 @@ Route::post('/home/doc/getadmins', 'FileController@ongetadmins')->name('getadmin
 Route::get('/home/doc/{file_id}','FileController@index')->name('displaydoc');
 Route::get('/home/doc/{file_id}/browse/true','FileHandlerController@onbrowsefile')->name('browsefile');
 Route::post('/home/senddoc/{file_id}', 'DocController@onsenddoc')->name('senddoc');
+
 Route::post('/home/doc/getaccess', 'DocController@ongetaccess')->name('getaccess');
 Route::get('/home/doc/getaccess', function () {
     return redirect()->route('home');
 });
-Route::post('/home/createaccess/{file_id}', 'AdminFileController@oncreateadminaccess')->name('createaccess');
+Route::post('/home/createaccess/{file_id}', 'FileController@oncreateadmin')->name('createaccess');
 Route::get('/home/createaccess/', function () {
     return redirect()->route('home');
 });

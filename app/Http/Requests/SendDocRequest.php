@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\File;
+use Illuminate\Support\Facades\Auth;
+
 class SendDocRequest extends FormRequest
 {
     /**
@@ -26,8 +28,9 @@ class SendDocRequest extends FormRequest
      */
     public function rules()
     {
+        $email = Auth::user()->email;
         $rules = ['file_id' => 'required|integer',
-            'recipient.*' => 'required|email'
+            'recipient.*' => 'required|email|exists:users,email|not_in:'.$email
             //
         ];
         return $rules;

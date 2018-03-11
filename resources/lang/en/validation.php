@@ -103,6 +103,16 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'recipient.*' => [
+            'required' => 'Укажите e-mail адрес для поля :attribute!',
+            'email' => 'У поля :attribute некорректен e-mail!',
+            'exists' => 'Указанный в поле :attribute e-mail не зарегистрирован!',
+            'not_in' => 'Указанный в поле  :attribute e-mail принадлежит Вам. Вы не можете отправить документ самому себе',
+        ],
+        'file_upload' => [
+            'mimes' => 'Файл не загружен! Можно только pdf',
+            'between' => 'Файл не загружен! Максимальный размер файла 10Мб',
+        ]
     ],
 
     /*

@@ -17,10 +17,19 @@ class RoleOwner
      */
     public function handle($request, Closure $next)
     {
-        if ($request->file_id) {
-            $file = File::findOrFail($request->file_id);
+        if($request->ajax()) {
+            $file_id = $request->all()['file_id'];
+        }
+        else
+        {
+            $file_id = $request->file_id;
+        }
+
+        if ($file_id) {
+            $file = File::findOrFail($file_id);
             if (Auth::user()->id != $file->user_id)
             {
+                flash()->error('Только владелец документа может назначить администратора!');
                 return redirect()->back();
             }
         }

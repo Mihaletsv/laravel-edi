@@ -7,6 +7,9 @@ use Auth;
 class FileHandlerController extends HomeController
 {
     public function onUploadFile(Request $request)  {
+        $this->validate($request, [
+            'file_upload' => 'mimes:pdf|between:0,10000'
+        ]);
         $file = $request->file('file_upload');
         $fileName = $file->getClientOriginalName();
         $fileBody = file_get_contents($file->getRealPath());
@@ -14,6 +17,7 @@ class FileHandlerController extends HomeController
         $this->filesTable->varFileName = $fileName;
         $this->filesTable->varFileBody = base64_encode($fileBody);
         $this->filesTable->save();
+        flash()->info('Файл добавлен');
         return redirect('home');
     }
 
@@ -27,12 +31,7 @@ class FileHandlerController extends HomeController
         $fileContentDecoded = base64_decode($fileContent);
         unset($fileContent);
         if (!empty($file_data)) {
-            $ext = $this->getFileExt($file_data['varFileName']);
-            if ($ext == 'pdf') {
                 header('Content-Type: application/pdf');
-            } else {
-                header('Content-Type: image');
-            }
             echo $fileContentDecoded;
             die;
         }
@@ -41,12 +40,7 @@ class FileHandlerController extends HomeController
 }
 
     public function onDownloadFile($file_id)
-    {
-        $noaccess = false;
-        if (!empty($noaccess)) {
-            echo "У Вас нет прав на загрузку этого файла. Обратитесь к его владельцу";
-            exit();
-        }
+    {;
         $result = $this->filesTable->getDocById($file_id);
         $fileContentDecoded = base64_decode($result->varFileBody);
         $fileName = $result->varFileName;
@@ -59,10 +53,5 @@ class FileHandlerController extends HomeController
         die;
     }
 
-    private function getFileExt($filename)
-    {
-        $temp = explode('.', $filename);
-        return strtolower(end($temp));
-    }
 
 }

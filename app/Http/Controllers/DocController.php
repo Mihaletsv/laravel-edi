@@ -66,8 +66,9 @@ class DocController extends Controller
     }
 
     if (!empty($data_insert)) {
-        $this->docsTable->insert($data_insert);
+        Doc::insert($data_insert);
     }
+       flash()->info('Документы отправлены');
        return redirect('home/docs/outbox');
    }
 

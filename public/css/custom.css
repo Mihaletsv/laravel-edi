@@ -37,3 +37,10 @@ footer p {
 .lcol {
 width: 220px !important;
 }
+
+.alert_info_mes {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 400px;
+}

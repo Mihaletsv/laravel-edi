@@ -10,6 +10,7 @@
         "doctrine/dbal": "^2.5",
         "fideloper/proxy": "~3.3",
         "illuminate/html": "^5.0",
+        "laracasts/flash": "^3.0",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
         "tarampampam/laravel-ide-helper": "^1.0.8"
