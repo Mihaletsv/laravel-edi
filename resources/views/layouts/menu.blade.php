@@ -12,13 +12,16 @@
                                 @endauth
                         </div>
                         <div class="panel-body menu" onclick="window.location.href='{{route('home')}}'">
-                            Мои документы
+                            Мои файлы
                         </div>
                         <div class="panel-body menu" onclick="window.location.href='{{route('docs','inbox')}}'">
                             Входящие
                         </div>
                         <div class="panel-body menu" onclick="window.location.href='{{route('docs','outbox')}}'">
                             Отправленные
+                        </div>
+                        <div class="panel-body menu" onclick="window.location.href='{{route('docs','draft')}}'">
+                            Черновики
                         </div>
                         <div class="panel-body menu">
                             Удаленные

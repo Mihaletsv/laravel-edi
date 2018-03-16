@@ -24,11 +24,17 @@ Route::post('/home/uploadfile','FileHandlerController@onuploadfile')->name('uplo
 Route::get('/home/uploadfile', function () {
     return redirect()->route('home');
 });
-Route::get('/home/downloadfile/{file_id}','FileHandlerController@ondownloadfile')->name('downloadfile');
+Route::get('/home/downloadfile/{file_id}/{doc_id?}','FileHandlerController@ondownloadfile')->name('downloadfile');
+Route::post('/home/doc/signhelp', 'SignController@onsignverify');
 Route::post('/home/doc/getadmins', 'FileController@ongetadmins')->name('getadmins');
-Route::get('/home/doc/{file_id}','FileController@index')->name('displaydoc');
+Route::get('/home/doc/{file_id}/{doc_id}','DocController@displaydoc')->name('displaydoc');;
 Route::get('/home/doc/{file_id}/browse/true','FileHandlerController@onbrowsefile')->name('browsefile');
+Route::get('/home/doc/{file_id}','FileController@displayfile')->name('displayfile');;;
 Route::post('/home/senddoc/{file_id}', 'DocController@onsenddoc')->name('senddoc');
+
+Route::post('/home/getpdf', 'DocController@ongetpdf')->name('getpdf');
+Route::post('/home/verifysign', 'DocController@onverifysign')->name('verifysign');
+Route::post('/home/signdoc', 'DocController@onsign')->name('signdoc');
 
 Route::post('/home/doc/getaccess', 'DocController@ongetaccess')->name('getaccess');
 Route::get('/home/doc/getaccess', function () {
@@ -38,3 +44,4 @@ Route::post('/home/createaccess/{file_id}', 'FileController@oncreateadmin')->nam
 Route::get('/home/createaccess/', function () {
     return redirect()->route('home');
 });
+

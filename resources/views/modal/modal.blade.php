@@ -9,6 +9,7 @@
             <div class="modal-body">
                 {!! Form::open(['route' => ['senddoc', 'file_id'=>$file_id], 'name' => 'recForm']) !!}
                 {!! Form::hidden('file_id', "{$file_id}", ['class'=>'hide', 'id'=>'file_id']) !!}
+                {!! Form::hidden('doc_id', "{$doc_id}", ['class'=>'hide', 'id'=>'doc_id']) !!}
                 <div class="row">
                     <div class="col-xs-12"  id="recDivRows">
                         <div class="input-group">

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\File;
-use App\Doc;
+
 use Illuminate\Http\Request;
 use Auth;
 

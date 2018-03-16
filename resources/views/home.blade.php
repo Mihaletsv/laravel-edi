@@ -11,11 +11,13 @@
                                 <div class="table-responsive">
                                     <table class="table table-striped table-hover">
                                         @if (!empty($outbox))
-                                                @include('outbox_rows')
+                                                @include('rows.outbox_rows')
                                         @elseif (!empty($inbox))
-                                                @include('inbox_rows')
+                                                @include('rows.inbox_rows')
+                                        @elseif (!empty($draft))
+                                            @include('rows.draft_rows')
                                         @else
-                                            @include('mydocs_rows')
+                                            @include('rows.mydocs_rows')
                                         @endif
                                 </table>
                                 </div>

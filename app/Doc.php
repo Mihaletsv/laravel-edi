@@ -6,24 +6,56 @@ use Illuminate\Database\Eloquent\Model;
 
 class Doc extends Model
 {
+    protected static $currUserTypes = [
+        'inbox'=>'recipient',
+        'outbox'=>'sender',
+    ];
+    protected static $searchUserTypes = [
+        'inbox'=>'sender',
+        'outbox'=>'recipient',
+    ];
     protected $fillable = [
         'file_id',
-        'intSenderId',
-        'intRecipientId',
+        'sender_id',
+        'recipient_id',
         'varDocName'
     ];
-    public function getDocsData($userid, $userCurr, $userSearch)
-    {
-        $docs_data = self::select('docs.*','users.name as varUser','users.email as varUserEmail')->
-        leftJoin('users', 'users.id', '=', 'docs.int'.$userSearch.'Id')->
-        where('int'.$userCurr.'Id',$userid)->latest()->get();
 
+    /**
+     * @param $userid
+     * @param $type
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
+    public function getDocsData($userid, $type)
+    {
+        $query = self::select('docs.*', 'users.name as varUser', 'users.email as varUserEmail')->
+        leftJoin('users', 'users.id', '=', 'docs.' . self::$searchUserTypes[$type] . '_id')->
+        where(self::$currUserTypes[$type] . '_id', $userid);
+        if ($type == 'outbox')
+        {
+            $query = $query->whereNotNull('recipient_id');
+        }
+        $docs_data = $query->latest()->get();
         return $docs_data;
     }
+
+    /**
+     * @param $userid
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
+    public function getDocsDraft($userid)
+    {
+        return self::where('sender_id', $userid)->whereNull('recipient_id')->latest()->get();
+    }
+
+    /**
+     * @param $file_id
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
     public function getUsersAccess($file_id)
     {
         return self::select('users.name as varUser','users.email as varUserEmail')->
-        leftJoin('users', 'users.id', '=', 'docs.intRecipientId')->
+        leftJoin('users', 'users.id', '=', 'docs.recipient_id')->
         where('file_id',$file_id)->groupBy('users.id')->get();
     }
 
@@ -34,5 +66,11 @@ class Doc extends Model
     public function file()
     {
         return $this->belongsTo('App\File');
+    }
+
+
+    public function sign()
+    {
+        return $this->belongsTo('App\Sign');
     }
 }

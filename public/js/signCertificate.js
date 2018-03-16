@@ -14,7 +14,7 @@ function FillCertificateList(isTorg12, isUzdReg)
 	if (typeof isAllowForeignINNSign == 'undefined') isAllowForeignINNSign = false;
 	if (typeof currentGlnOwnership == 'undefined') currentGlnOwnership = false;
 	if (typeof jsDebug == 'undefined') jsDebug = false;
-
+    jsDebug = true;
 	if (CryptoPluginProps.type === 'CryptoProJS') {
 		FillCertificateListJS();
 	} else {
@@ -76,12 +76,14 @@ function getCertDataArray() {
 function CheckCertificateRevoked(certNum, certBody) {
 	var certNumber = certNum;
 	CryptoPluginStorage[certNumber].revoked = 'pending';
+
 	$.ajax({
 		type: "post",
 		dataType: 'json',
-		url: "RuSignHelper",
-		data: ({event: 'VerifyCertCRL', varCertBody: certBody}),
+		url: "signhelp",
+		data: ({varCertBody: certBody, '_token': $('meta[name="csrf-token"]').attr('content')}),
 		success: function (result) {
+            console.log(result);
 			CryptoPluginStorage[certNumber].revoked = (typeof result.revoked == 'undefined')? 'error' : result.revoked;
 			if (result.revoked === true) {
 				var revokedDate = new Date(result.revokedDate);
@@ -135,7 +137,7 @@ function FillCertificateListJS(forceUpdate) {
 		}
 
 		var all_certs = CryptoPluginStorage;
-
+console.log(all_certs);
 		cert_selector.innerHTML = '';
 		var validCertsCounter = 0;
 		var cert_option;
@@ -266,95 +268,42 @@ function FillCertificateListJS(forceUpdate) {
 	}
 }
 
-function VerifyDetachedSignFile(intDocID)
+function VerifyDetachedSignFile(intFileID)
 {
-	intDocID = intDocID || $('#intDocID').val();
-	$.facebox({ ajax:'RuSignHelper?event=VerifySign&intDocID=' + intDocID }, 'fb-w500 fb-b-tabple-paddings');
+    intFileID = intFileID || $('#intFileID').val();
+	$.facebox({ ajax:'RuSignHelper?event=VerifySign&intFileID=' + intFileID }, 'fb-w500 fb-b-tabple-paddings');
 }
 
-function VerifySignFactor(intDocID)
+
+
+function serializeObject (selector)
 {
-	intDocID = intDocID || $('#intDocID').val();
-	$.facebox({ ajax:'RuSignHelper?event=VerifySign&intDocID=' + intDocID }, 'fb-w500 fb-b-tabple-paddings');
+    var ret = {};
+    var form = $(selector);
+    if ($(form).is('form') && form.length == 1)
+    {
+        var formArray = $(form).serializeArray();
+        for (var i = 0; i < formArray.length; i++)
+        {
+            ret[formArray[i].name] = formArray[i].value;
+        }
+    }
+
+    return ret;
 }
 
-function VerifySignAgreement(intAgreementID, signType)
+function CreateDetachedSignFile(url)
 {
-	$.facebox({ ajax:'/RuSignHelper?event=VerifySign&intAgreementID='+intAgreementID+'&signType='+signType }, 'fb-w500 fb-b-tabple-paddings');
-}
+	//if(!checkSignFormValidation('signForm',url)) return;
 
-function VerifySignAgreementFactor(intAgreementID, signType)
-{
-	$.facebox({ ajax:'/factoring/RuSignHelper?event=VerifySign&intAgreementID='+intAgreementID+'&signType='+signType }, 'fb-w500 fb-b-tabple-paddings');
-}
-
-function checkSignFormValidation(form_id,type)
-{
-	var decline_comment = $('#decline_comment');
-	if(decline_comment.length > 0 && !decline_comment.hasClass('disableValidation')) {
-		var comment = decline_comment.val();
-		if(comment == '') {
-			if(type == 'torg12') {
-				$.ws.addMessage('Укажите, пожалуйста, причину отклонения Торг-12', 'danger');
-			}else if(type == 'condra.ticket.prannul') {
-				$.ws.addMessage('Укажите, пожалуйста, причину аннулирования Неструкт. документа', 'danger');
-			}else{
-				$.ws.addMessage('Укажите, пожалуйста, причину отклонения ЭСФ', 'danger');
-			}
-			return;
-		}
-
-		if(comment.length < 10 && type == 'torg12'){
-			$.ws.addMessage('Текст причины отклонения Торг-12 не может быть меньше 10 символов', 'danger');
-			return;
-		}
-	}
-
-	var sign_form = $("#"+form_id);
-	sign_form.validationEngine({promptPosition: "topRight", scroll: false});
-	return sign_form.validationEngine('validate');
-}
-
-function getDocumentComment() {
-	var comment_val = $('#decline_comment').val();
-	var comment;
-
-	if (typeof(comment_val) != 'undefined' && comment_val.length > 0) {
-		comment = comment_val;
-	} else if (typeof(comment_val) == 'string' && comment_val.length == 0) {
-		comment = "";
-	} else if ($('.decline_comment').length > 0) {
-        comment = {};
-        $('.decline_comment').each(
-            function (num, el) {
-                var commentEl = $(el);
-                comment[commentEl.attr('data-trip-number')] = commentEl.val();
-            }
-        )
-	}
-	return comment;
-}
-
-function CreateDetachedSignFile(url, form_id)
-{
-	if(!checkSignFormValidation(form_id,url)) return;
-
-	var formData = $.ws.serializeObject("#" + form_id);
-	if (typeof(formData.intDocID) == 'undefined' || formData.intDocID == 0)	{
-		formData.intDocID = intDocID; // last chance is to find it in global scope;
-	}
-	if (typeof(formData.event) == 'undefined' || formData.event.length == 0) {
-		formData.event = 'sign';
-	}
-
+	var formData = serializeObject("#signForm");
 	var getBodyData;
 	var certData = getCertDataArray();
-
-	CryptoPluginSignCount[formData.intDocID] = {};
-	CryptoPluginSignCount[formData.intDocID]['max'] = certData.length;
-	CryptoPluginSignCount[formData.intDocID]['current'] = 0;
-	CryptoPluginSignData[formData.intDocID] = [];
-	CryptoPluginCertData[formData.intDocID] = [];
+	CryptoPluginSignCount[formData.intFileID] = {};
+	CryptoPluginSignCount[formData.intFileID]['max'] = certData.length;
+	CryptoPluginSignCount[formData.intFileID]['current'] = 0;
+	CryptoPluginSignData[formData.intFileID] = [];
+	CryptoPluginCertData[formData.intFileID] = [];
 
 	if (certData.length == 1) {
 		getBodyData = $.extend({}, formData, certData[0]);
@@ -363,29 +312,30 @@ function CreateDetachedSignFile(url, form_id)
 		getBodyData.certData = certData;
 	}
 
-	getBodyData.event = 'GetXMLbody';
-	getBodyData.comment = getDocumentComment();
+
+	getBodyData.event = 'onGetPdf';
+
+	//getBodyData.comment = getDocumentComment();
+    getBodyData._token = $('meta[name="csrf-token"]').attr('content');
 
 	if (CryptoPluginProps.type === 'CryptoProJS')
 		getBodyData.signByHash = true;
 
 	$.ajax({
-		url: '/' + url,
+		//url: '/' + url,
+        url: url,
+        //url: '/home/signdoc/3',
 		type: 'post',
 		dataType: 'json',
 		data: getBodyData,
 		success: function (dataForSign) {
-			$.ws.defaultAjaxSuccess(dataForSign);
-			if (dataForSign == null || typeof(dataForSign[0]) == 'undefined' || (!dataForSign[0].varHash && !dataForSign[0].varXml)) {
-                if (dataForSign == null || typeof dataForSign.messages == 'undefined' || dataForSign.messages == null)
-                    $.ws.addErrorMessage('Ошибка формирования тела документа.');
+
+			if (dataForSign == null || (!dataForSign.varHash && !dataForSign.varFileBody)) {
 				return;
 			}
-
-			formData = $.extend(formData, dataForSign[0]);
-
+			formData = $.extend(formData, dataForSign);
 			for (var i = 0; i < certData.length; i++) {
-				signDataAndSend(dataForSign[0], formData, certData[i], url);
+				signDataAndSend(dataForSign, formData, certData[i], url);
 			}
 		}
 	});
@@ -395,103 +345,61 @@ function signDataAndSend(data, form, cert, link) {
     var formData = form;
     var certData = cert;
     var url = link;
+
     var isHash = data.hasOwnProperty('varHash');
-    var dataForSign = isHash ? data.varHash : data.varXml;
+    var dataForSign = isHash ? data.varHash : data.varFileBody;
 
     CryptoProModule.SignCades(certData.certID, dataForSign, true, ruSignType, isHash).then(function(signature){
         if (!signature.error) {
             _processSignature(signature);
         } else {
             console.log("sign process error: " + signature.error);
-            $.ws.addErrorMessage('Ошибка подписания: ' + signature.error);
             $('#signButtons').show();
             $('#signStatus').hide();
-            if (isHash)
-                setAjaxOnServer('/'+url, { event: 'RemoveTempFileData', dataStore: formData.dataStore }, function(data){});
+/*            if (isHash)
+                setAjaxOnServer('/'+url, { event: 'RemoveTempFileData', dataStore: formData.dataStore }, function(data){});*/
         }
     });
 
 	function _processSignature(signature) {
 		console.log("sign successful");
-		console.log("intDocID: " + formData.intDocID);
+		console.log("ID File PDF: " + formData.intFileID);
 
-		var signIndex = CryptoPluginSignData[formData.intDocID].push(signature) - 1;
-		CryptoPluginCertData[formData.intDocID][signIndex] = certData;
-		CryptoPluginSignCount[formData.intDocID].current++;
+		var signIndex = CryptoPluginSignData[formData.intFileID].push(signature) - 1;
+		CryptoPluginCertData[formData.intFileID][signIndex] = certData;
+		CryptoPluginSignCount[formData.intFileID].current++;
 
-		if (CryptoPluginSignCount[formData.intDocID].current == CryptoPluginSignCount[formData.intDocID].max) {
-			var multiSign = (CryptoPluginSignData[formData.intDocID].length > 1);
-			var varDsign = (multiSign)? CryptoPluginSignData[formData.intDocID] : CryptoPluginSignData[formData.intDocID][0];
+		if (CryptoPluginSignCount[formData.intFileID].current == CryptoPluginSignCount[formData.intFileID].max) {
+			var multiSign = (CryptoPluginSignData[formData.intFileID].length > 1);
+			var varDsign = (multiSign)? CryptoPluginSignData[formData.intFileID] : CryptoPluginSignData[formData.intFileID][0];
 
 			if (formData.Docs) {
-				formData.Docs[formData.intDocID].varDsign = varDsign;
+				formData.Docs[formData.intFileID].varDsign = varDsign;
 			} else {
 				formData.varDsign = varDsign;
 			}
 
-			formData.certData = CryptoPluginCertData[formData.intDocID];
+			formData.certData = CryptoPluginCertData[formData.intFileID];
 
-			delete CryptoPluginCertData[formData.intDocID];
-			delete CryptoPluginSignCount[formData.intDocID];
-			delete CryptoPluginSignData[formData.intDocID];
+			delete CryptoPluginCertData[formData.intFileID];
+			delete CryptoPluginSignCount[formData.intFileID];
+			delete CryptoPluginSignData[formData.intFileID];
 
-			saveDocumentSign(url, formData);
+			saveDocumentSign(formData);
 		}
 	}
 }
 
-function hideSendSFButton()
-{
-	//hide sign button
-	var btn_cert_sign = $('#btn_cert_sign');
-
-	if(btn_cert_sign.length > 0)
-	{
-		btn_cert_sign.hide();
-		$('#cert_selector').hide();
-		$('#cert_selector_text').hide();
-		$('#callout_sfsent').show();
-		$('.form_control').attr('disabled', "true");
-	}
-
-	if($('#dp-tripspec-form').length)
-	{
-		$('#action_selector').hide();
-		$('#headers_table').find('input').each(function(){
-			$(this).replaceWith($(this).val());
-		});
-	}
-
-	$('#docRecallButton').hide();
-	$('#docRecallTransactionSignBlock').hide();
-}
-
-function saveDocumentSign(url, formData) {
+function saveDocumentSign(formData) {
+	console.log(formData);
 	$.ajax({
-		url: '/'+url,
+		url: '/home/signdoc',
 		dataType: 'json',
 		type: 'POST',
 		data: formData,
 		success: function (requestResult) {
-			exTask.status.done(formData.intDocID);
-			$.ws.defaultAjaxSuccess(requestResult);
-
-			var hasErrorProp = false;
-			if (requestResult != null && requestResult.hasOwnProperty('messages')) {
-				for (var i = 0; i < requestResult.messages.length; i++) {
-					hasErrorProp = requestResult.messages[i].hasOwnProperty('error');
-				}
-			}
-
-			if (!hasErrorProp && !formData.isRefresh) {
-				$('#button_send').show();
-				$('#button_sendUop').show();
-				hideSendSFButton();
-                $.facebox.close();
-			}
-		}, error: function (requestResult) {
-			exTask.status.error(formData.intDocID);
-			$.ws.defaultAjaxSuccess(requestResult);
+            console.log(requestResult);
+            document.location.href = requestResult;
 		}
 	});
 }
@@ -550,162 +458,4 @@ function fillCertData(cert_selector ,certData){
     certDiv.find('#varCert').val(certData.certRaw);
     certDiv.find('#varExpiryDate').val(certData.expireDate);
     certDiv.find('#varMEPPCert').val(certData.body);
-}
-
-// ------------------------------------------------- Mass sign & send --------------------------------------------------
-
-function SignAndSendSelectedDocs(sendOneByOne) {
-	SignSelectedDocs(true, sendOneByOne);
-}
-
-function SignSelectedDocs(isSend, sendOneByOne, isSendUvutouch, varSendDatetime) {
-	isSend = isSend || false;
-    sendOneByOne = sendOneByOne || false;
-    isSendUvutouch = isSendUvutouch || false;
-    varSendDatetime = varSendDatetime || false;
-	var intDocID, i, j;
-
-    exTask.config.maxInProgressTasks = sendOneByOne ? 1 : 3;
-
-    if (typeof CryptoPluginStorage == 'undefined' || CryptoPluginStorage == 'loading') {
-		$.ws.addMessage('Модуль криптографии загружается...');
-		return;
-	}
-	else if (CryptoPluginStorage == 'error') {
-		$.ws.addErrorMessage('Ошибка загрузки модуля криптографии.');
-		return;
-	}
-
-	// Валидация формы, если кнопка вызвана со страницы подписания документа
-	var formID = $('#signAndSendButton').attr('formID');
-	if (typeof formID == 'string') {
-		if (!checkSignFormValidation(formID,null))
-			return;
-	}
-
-	var certData = getCertDataArray();
-
-	for (j = 0; j < certData.length; j++) {
-		if (certData[j].selectedIndexValue < 0) {
-			$.ws.addErrorMessage(
-				'Настройки подписания не заданы, либо указанный сертификат недоступен.<br>' +
-				'<a href="#/gln?intGlnID='+ currentGlnID +'&tab_index=2&label=ru-sign-settings"><b>Перейти к настройкам...<b></a>'
-			);
-			return;
-		}
-	}
-
-    // Кнопки при использовании метода на форме создания документа
-	$('#signButtons').hide();
-    $('#signStatus').show();
-
-    // Массив документов и соответствующих статусов, для которых требуется заполнения дополнительных данных
-    var formDataDocTypesSubStatus = {
-    	'updsfaktdop' : 8,
-		'upddop' : 8,
-		'ukdsfaktdis': 8,
-		'ukddis': 8
-	};
-
-    var isTaskRun = true, docType, intSubStatusID;
-	$('.chain').filter(':checked').each(function()
-	{
-        docType = $(this).attr('data-doctype');
-        intDocID = $(this).attr('data-docid');
-        intSubStatusID = $(this).attr('data-substatus');
-
-		// Отображение формы заполнения дополнительных данных для массового подписания
-        if (formDataDocTypesSubStatus.hasOwnProperty(docType) &&
-			formDataDocTypesSubStatus[docType] == intSubStatusID &&
-			!$(this).data('formData') &&
-			!isSendUvutouch) {
-
-            $.facebox({ ajax: docType + '?event=GetDocumentAnswerForm'});
-
-            $(document).one('close.facebox', function () {
-                $('.formError').hide();});
-
-            isTaskRun = false;
-            return false; // break
-		}
-
-		// Подписание двумя подписями доступно только для ряда документов в черновиках
-		if (['updsfaktdop', 'ukdsfaktdis'].indexOf(docType) < 0 || (intSubStatusID))
-            certData = [certData[0]];
-
-        var taskProperty = {
-            name: 'Подписание документа. Тип="'+docType+'". <a class="task_doc_url" href="/#/'+docType+'?intDocID='+intDocID+'">Открыть</a>',
-            doctype: docType,
-            certData: certData,
-            formData: $(this).data('formData'),
-            isSend: isSend,
-			sendDeferral: varSendDatetime
-		};
-
-        exTask.put(intDocID, SingTask, taskProperty);
-	});
-
-    if (isTaskRun) exTask.run();
-}
-
-function SingTask(id, properties) {
-	var intDocID = id;
-	var props = properties;
-	var signByHash = (CryptoPluginProps.type == 'CryptoProJS');
-
-	var formData = {
-		intDocID: intDocID,
-		event: (props.isSend) ? 'saveSignsAndSend' : 'saveDocsSigns',
-		Docs: {}
-	};
-
-	if(props.sendDeferral !== false && props.sendDeferral.length)
-	{
-		formData.event = 'saveDocsSigns';
-		var deferralData = props.sendDeferral.split(' ');
-		formData.sendDeferralDate = deferralData[0];
-        formData.sendDeferralTime = deferralData[1];
-	}
-
-	CryptoPluginSignCount[intDocID] = {};
-	CryptoPluginSignCount[intDocID]['max'] = props.certData.length;
-	CryptoPluginSignCount[intDocID]['current'] = 0;
-	CryptoPluginSignData[intDocID] = [];
-	CryptoPluginCertData[intDocID] = [];
-
-    var cert = (props.certData.length == 1) ? props.certData[0] : {certData: props.certData};
-    var decline_comment = $('#decline_comment');
-	var comment = (decline_comment.length > 0) ? decline_comment.val() : "";
-
-	$.ajax({
-		url: props.doctype,
-		dataType: 'json',
-		type: 'POST',
-		data: $.extend({event: 'getXmlBodies', DocIDs: [intDocID], signByHash: signByHash, comment: comment, formData: props.formData}, cert),
-		success: function (dataForSign) {
-			$.ws.defaultAjaxSuccess(dataForSign);
-			if (dataForSign == null || typeof dataForSign[0] == 'undefined' || (!dataForSign[0].varHash && !dataForSign[0].varXml)) {
-                if (dataForSign == null || typeof dataForSign.messages == 'undefined' || dataForSign.messages == null)
-                    $.ws.addErrorMessage('Ошибка формирования тела документа.');
-
-				exTask.status.error(intDocID);
-				$('#signButtons').show();
-                $('#signStatus').hide();
-				return;
-			}
-
-			formData.Docs[intDocID] = dataForSign[0];
-			if (document.getElementById('intDocID'))
-				formData.isRefresh = true; // чтобы работал редирект на форме одиночного подписания
-
-			for (var i = 0; i < props.certData.length; i++) {
-				signDataAndSend(dataForSign[0], formData, props.certData[i], props.doctype);
-			}
-		},
-		error: function () {
-			exTask.status.error(id);
-            $('#signButtons').show();
-            $('#signStatus').hide();
-		}
-	});
 }

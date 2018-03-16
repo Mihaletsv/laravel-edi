@@ -9,7 +9,7 @@ class File extends Model
 
     public function getDocsData($owner)
     {
-        return self::select('id','user_id','varFileName','intSign','created_at')->
+        return self::select('id','user_id','varFileName','created_at')->
         where('user_id',$owner)->get();
     }
 

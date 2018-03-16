@@ -9,6 +9,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
+    protected
+        $sign_data = [],
+        $user_data = [];
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
 

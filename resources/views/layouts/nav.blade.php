@@ -193,7 +193,8 @@ function fileUp() {
                             success: function (data) {
                                 if (data.length > 0) {
                                     for (var i = 0; i < data.length; i++) {
-                                        $('#accessList').append('<h6>' + data[i].varUser + ' (' + data[i].varUserEmail + ')</h6>');
+                                        if (data[i].varUser)
+                                            $('#accessList').append('<h6>' + data[i].varUser + ' (' + data[i].varUserEmail + ')</h6>');
                                     }
                                 }
                                 else

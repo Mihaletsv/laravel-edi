@@ -19,7 +19,7 @@ class CreateFilesTable extends Migration
             $table->string('varFileName');
             $table->binary('varFileBody');
             $table->tinyInteger('intDeleted')->default(0);
-            $table->tinyInteger('intSign')->default(0);
+            $table->integer('sign_id')->default(0);
             $table->timestamps();
 
            // $table->foreign('intOwnerId')->references('id')->on('users')->onDelete('cascade');

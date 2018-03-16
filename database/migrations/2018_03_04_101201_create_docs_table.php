@@ -16,10 +16,10 @@ class CreateDocsTable extends Migration
         Schema::create('docs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('file_id');
-            $table->integer('intSenderId');
-            $table->integer('intRecipientId');
-            $table->string('varDocName')->nullable()->default(null);;
-            $table->integer('intDocSignId')->nullable()->default(null);
+            $table->integer('sender_id');
+            $table->integer('recipient_id')->nullable()->default(null);;
+            $table->string('varDocName')->nullable()->default(null);
+            $table->integer('sign_id')->nullable()->default(null);
             $table->timestamps();
         });
     }
