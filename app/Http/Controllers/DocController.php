@@ -45,11 +45,6 @@ class DocController extends Controller
     public function displayDoc($file_id, $doc_id)
     {
         $doc = Doc::findOrFail($doc_id);
-/*        if (!empty($doc->user))
-        {
-            $this->user_data = $doc->user;
-            dd($this->user_data);
-        }*/
         if (!empty($doc->sign))
         {
             $this->sign_data = SignHelper::getDataVerifySign($doc->file->varFileBody, $doc->sign->toArray());
@@ -156,25 +151,6 @@ class DocController extends Controller
         }
     }
 
-    public function onVerifySign()
-    {
-        $intTransID   = $this->request->number('intTransID');
-        $intSignID    = $this->request->number('intSignID');
-
-        $varBody = FnsTransBodiesTable::model(USE_SLAVE_CONNECTION)->getOne($where)['varBody'];
-        $varSigns = FnsTransSignsTable::model(USE_SLAVE_CONNECTION)->Result()->GetByFields($where);
-
-        foreach ($varSigns as $key => $varSign) {
-            $signData[$key]                     = CryptoHelper::getDataFromSign($varSign['varSign'], false);
-            $signData[$key]['isValid']          = SignHelper::verifySign($varSign['varSign'], $varBody);
-            $signData[$key]['intSignID']        = $varSign['id'];
-
-        }
-
-        $this->response->add('signdata', $signData);
-        echo $this->display('ru_sign_info.tpl');
-        exit();
-    }
 
 
 

@@ -10,9 +10,10 @@ class SignController extends Controller
     protected $filesTable, $docsTable, $docs;
     public function onSignVerify(Request $request)
     {
-echo json_encode('OKAY');
-exit();
-        //return SignHelper::VerifyCertCrl($cert_body);
+        //session_write_close();
+        $result = SignHelper::verifyCertCrl($request->varCertBody);
+        echo json_encode($result);
+        exit();
     }
 
 

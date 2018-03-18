@@ -4,17 +4,16 @@ var CryptoPluginSignCount = {};
 var CryptoPluginSignData = {};
 var CryptoPluginCertData = {};
 
-function FillCertificateList(isTorg12, isUzdReg)
+function FillCertificateList(isVerify)
 {
-	CryptoPluginProps.isTorg12 = isTorg12 || false;
-	CryptoPluginProps.isUzdReg = isUzdReg || false;
+
 	if (typeof isInterfaceUzdEvo == 'undefined') isInterfaceUzdEvo = false;
 	if (typeof isFactoring == 'undefined') isFactoring = false;
 	if (typeof ruSignType == 'undefined' || !ruSignType) ruSignType = 'CADES_BES';
 	if (typeof isAllowForeignINNSign == 'undefined') isAllowForeignINNSign = false;
 	if (typeof currentGlnOwnership == 'undefined') currentGlnOwnership = false;
 	if (typeof jsDebug == 'undefined') jsDebug = false;
-    jsDebug = true;
+
 	if (CryptoPluginProps.type === 'CryptoProJS') {
 		FillCertificateListJS();
 	} else {
@@ -28,12 +27,28 @@ function FillCertificateList(isTorg12, isUzdReg)
 				console.log("Версия плагина: " + plugin.pluginVersion + " " + plugin.pluginType);
 				FillCertificateListJS();
 				CryptoPluginProps.type = 'CryptoProJS';
+
+
+                if (isVerify) {
+                    var sign = $('#SignTxtBox').val();
+                    var data = $('#FileTxtBox').val();
+
+                    CryptoProModule.VerifySignCades(sign, data).then(function (verify) {
+                        if (!verify.error) {
+                            console.log("Результат провери подписи: " + verify);
+                        }
+                        else {
+                            console.log(verify.error);
+                        }
+                    });
+                }
 			}
 			else {
 				console.log("КриптоПро ЭЦП Browser plug-in не доступен. Error: " + plugin.error);
 			}
 		});
 	}
+
 }
 
 function getCertSelectorArray() {
@@ -73,17 +88,28 @@ function getCertDataArray() {
 	return certData;
 }
 
+/*function SignVerify() {
+    var sign = document.getElementById("OutputTxtBox").value;
+    var data = StringToBase64(document.getElementById("InputTxtBox").value);
+    CryptoProModule.VerifySignCades(sign, data).then(function(verify){
+        if (!verify.error) {
+            log("Результат провери подписи: " + verify);
+        }
+        else {
+            log(verify.error);
+        }
+    });
+}*/
+
 function CheckCertificateRevoked(certNum, certBody) {
 	var certNumber = certNum;
 	CryptoPluginStorage[certNumber].revoked = 'pending';
-
 	$.ajax({
 		type: "post",
 		dataType: 'json',
 		url: "signhelp",
 		data: ({varCertBody: certBody, '_token': $('meta[name="csrf-token"]').attr('content')}),
 		success: function (result) {
-            console.log(result);
 			CryptoPluginStorage[certNumber].revoked = (typeof result.revoked == 'undefined')? 'error' : result.revoked;
 			if (result.revoked === true) {
 				var revokedDate = new Date(result.revokedDate);
@@ -135,9 +161,7 @@ function FillCertificateListJS(forceUpdate) {
 		} else if (typeof currentGlnInnCode != 'undefined') {
 			varGlnInnCode = currentGlnInnCode;
 		}
-
 		var all_certs = CryptoPluginStorage;
-console.log(all_certs);
 		cert_selector.innerHTML = '';
 		var validCertsCounter = 0;
 		var cert_option;
@@ -145,7 +169,7 @@ console.log(all_certs);
 		var defaultCertThumb = cert_selector.getAttribute('defaultThumb');
 		var allowDisabled = cert_selector.getAttribute('allowDisabled') === 'true';
 		var onlyDefaultAllowed = cert_selector.getAttribute('onlyDefaultAllowed') === 'true';
-
+        jsDebug = true;
 		for( var cert_num = 0; cert_num < all_certs.length; cert_num++ )
 		{
 			var cert = all_certs[cert_num];
@@ -267,15 +291,6 @@ console.log(all_certs);
 		}
 	}
 }
-
-function VerifyDetachedSignFile(intFileID)
-{
-    intFileID = intFileID || $('#intFileID').val();
-	$.facebox({ ajax:'RuSignHelper?event=VerifySign&intFileID=' + intFileID }, 'fb-w500 fb-b-tabple-paddings');
-}
-
-
-
 function serializeObject (selector)
 {
     var ret = {};
@@ -314,10 +329,7 @@ function CreateDetachedSignFile(url)
 
 
 	getBodyData.event = 'onGetPdf';
-
-	//getBodyData.comment = getDocumentComment();
     getBodyData._token = $('meta[name="csrf-token"]').attr('content');
-
 	if (CryptoPluginProps.type === 'CryptoProJS')
 		getBodyData.signByHash = true;
 

@@ -307,6 +307,7 @@ var CryptoProModule = (function() {
 	publicAPI.VerifySignCades = function(signatureBody, dataToVerify, isDetached, isHash) {
 
 		if (cadesplugin.type == 'NMAPI') { // Async NMAPI calls are separated to provide IE support
+
 			return CryptoProAsync.VerifySignCades(signatureBody, dataToVerify, isDetached, isHash);
 		}
 		else { // NPAPI plugin, conventional synchronous calls
@@ -329,6 +330,7 @@ var CryptoProModule = (function() {
                     oSignedData.VerifyHash(oHashedData, signatureBody, CADESCOM_CADES_BES);
                     verify = true;
                 } else {
+
                     oSignedData.ContentEncoding = CADESCOM_BASE64_TO_BINARY;
                     oSignedData.Content = dataToVerify;
                     oSignedData.VerifyCades(signatureBody, CADESCOM_CADES_BES, isDetached);

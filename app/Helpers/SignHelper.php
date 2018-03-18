@@ -13,8 +13,9 @@ class SignHelper {
     public static function getDataVerifySign($varBody,$varSign)
     {
         $signData = [];
-        //dd($varSigns);
             $signData['cert_data'] = CryptoHelper::getDataFromSign($varSign['varSignBody']);
+/*            $signData['baseSignContent'] = $varSign['varSignBody'];
+            $signData['baseContent'] = $varBody;*/
             $signData['isValid'] = self::verifySign($varSign['varSignBody'], $varBody);
         return $signData;
     }
@@ -52,7 +53,9 @@ class SignHelper {
      */
     private static function getCrlBodySerials($crl_list)
     {
+
         $serials_list = null;
+
 
         foreach ($crl_list as $crl_url) {
             if (empty($crl_url)) continue;
@@ -61,9 +64,14 @@ class SignHelper {
             $crl_body = file_get_contents(str_replace('www.nalogtelecom.ru', '172.16.162.42:88', $crl_url));
             if (empty($crl_body)) continue;
 
+
+
             if (preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', preg_replace('/\s+/', '', $crl_body)))
                 $crl_body = base64_decode(preg_replace('/\s+/', '', $crl_body));
-            $crl_file = tempnam(sys_get_temp_dir(), 'crl_');
+            $realpath = 'storage/';
+            $crl_file = tempnam($realpath, 'crl_');
+/*            echo($crl_file);
+            exit();*/
             file_put_contents($crl_file, $crl_body);
 
             $serials_list = shell_exec('openssl crl -in '.$crl_file.' -inform der -text -noout 2>/dev/null | egrep "Certificate Revocation List|Serial Number" -A 1');
@@ -77,6 +85,7 @@ class SignHelper {
 
     public static function verifyCertCrl($cert_body)
     {
+
         $cert_body = preg_replace('/\s+/', '',$cert_body);
         $cert_body = '-----BEGIN CERTIFICATE-----'."\n".chunk_split($cert_body,64,"\n").'-----END CERTIFICATE-----'."\n";
         $cert_decoded = openssl_x509_parse($cert_body, true);
@@ -84,6 +93,8 @@ class SignHelper {
         $crl_list = $cert_decoded['extensions']['crlDistributionPoints'];
         $crl_list = preg_replace('/\s+/', '',str_replace('Full Name:','',$crl_list));
         $crl_list = explode('URI:', $crl_list);
+
+
 
         $serials_list = self::getCrlBodySerials($crl_list);
 
@@ -94,6 +105,8 @@ class SignHelper {
 
         $cert_serial = new Math_BigInteger($cert_decoded['serialNumber']);
         $cert_serial = strtoupper($cert_serial->toHex());
+/*        echo json_encode($cert_serial);
+        exit();*/
 
         $serials_list = explode('Serial Number:', $serials_list);
         $result = array();

@@ -63,6 +63,8 @@
                                             <h6 title="Должность подписанта">{{$sign_data['cert_data']['title']}}</h6>
                                             <h6 title="Серийный номер">{{$sign_data['cert_data']['serial']}}</h6>
                                             <h6 title="Дата подписания">{{$sign_data['cert_data']['signDate']}}</h6>
+{{--                                            <a href="#" id="signVerifyButton" class="btn btn-sm btn-success">
+                                                Проверить подпись</a>--}}
                                                 @if ($sign_data['isValid'])
                                                     <h5 class="text-success sbold">Подпись верна</h5>
                                                 @else
@@ -79,6 +81,8 @@
                                         <h6 style="margin-top: 100px">Это черновик</h6>
                                     </div>
                                 </li>
+{{--                                <input type="hidden" id="FileTxtBox" value="{{$sign_data['baseContent']}}">
+                                <input type="hidden" id="SignTxtBox" value="{{$sign_data['baseSignContent']}}">--}}
                             @endif
 
                         </ul>

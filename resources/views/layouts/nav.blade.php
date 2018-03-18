@@ -84,10 +84,15 @@
 
 
 
-{{--@if($errors->any())
-    $('#myModal').modal("show");
-@endif--}}
+
 <script>
+
+    $( '#signVerifyButton' ).click(function(e) {
+            setTimeout('FillCertificateList(true)', 1000);
+
+
+    }
+    );
     Notify = {
         TYPE_INFO: 0,
         TYPE_SUCCESS: 1,
@@ -261,7 +266,18 @@ function fileUp() {
                     certExpDays.innerHTML = '';
                 }
             }
-
+    {{--            @if ($sign_data)
+    var sign = $('#SignTxtBox').val();
+    var data = $('#FileTxtBox').val();
+    CryptoProModule.VerifySignCades(sign, data).then(function(verify){
+        if (!verify.error) {
+            console.log("Результат провери подписи: " + verify);
+        }
+        else {
+            console.log(verify.error);
+        }
+    });
+    @endif --}}
         </script>
 
 </body>
