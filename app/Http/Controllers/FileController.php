@@ -21,13 +21,13 @@ class FileController extends Controller
         $this->middleware('roleowner', ['only' => 'oncreateadmin']);
     }
 
-    public function displayFile($file_id)
+    public function displayFile(Request $request)
     {
-        $file = File::findOrFail($file_id);
+        $file = File::findOrFail($request->file_id);
         $docs_data = $file->docs()->whereNotNull('recipient_id')->latest()->get()->toArray();
         $this->prepareDocData($docs_data);
         return view('doc', [
-                'file_id' => $file_id,
+                'file_id' => $request->file_id,
                 'doc_data' => $docs_data,
                 'doc_id' => null
             ]
@@ -37,14 +37,8 @@ class FileController extends Controller
     public function onGetAdmins(Request $request)
     {
         if ($request->ajax()) {
-            $file_id = $request->all()['file_id'];
-            $file = File::findOrFail($file_id);
+            $file = File::findOrFail($request->file_id);
             echo json_encode($file->roles);
-/*            foreach ($file->roles as $admin) {
-                $admins_data[] = User::findOrFail($admin->pivot->user_id);
-            }
-
-            echo json_encode($admins_data);*/
         }
     }
 
