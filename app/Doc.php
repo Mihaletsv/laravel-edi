@@ -35,7 +35,7 @@ class Doc extends Model
         {
             $query = $query->whereNotNull('recipient_id');
         }
-        $docs_data = $query->latest()->get();
+        $docs_data = $query->latest('updated_at')->get();
         return $docs_data;
     }
 
@@ -45,7 +45,7 @@ class Doc extends Model
      */
     public function getDocsDraft($userid)
     {
-        return self::where('sender_id', $userid)->whereNull('recipient_id')->latest()->get();
+        return self::where('sender_id', $userid)->whereNull('recipient_id')->latest('updated_at')->get();
     }
 
     /**

@@ -31,7 +31,7 @@
                             <span id="certExpDays"></span>
                         </div>
                         <div class="panel-body">
-                            <iframe src="{{ route('browsefile',['file_id'=> $file_id]) }}" width="66%" height="500" seamless
+                            <iframe src="{{ route('browsefile',['file_id'=> $file_id]) }}" width="66%" height="70%" seamless
                                     style="float: left;">
                             </iframe>
                             <div class="col-xs-6 col-sm-4" id="sidebar" role="navigation">
@@ -78,7 +78,9 @@
                                 <li>
                                     <a href="#" class="list-group-item" data-file_id="{{$file_id}}">Информация</a>
                                     <div class="row hide accessList" id="infoList" style="min-height: 200px;">
-                                        <h6 style="margin-top: 100px">Это черновик</h6>
+                                        @if (!$doc_data->recipient_id)
+                                            <h6 style="margin-top: 100px">Это черновик</h6>
+                                            @endif
                                     </div>
                                 </li>
 {{--                                <input type="hidden" id="FileTxtBox" value="{{$sign_data['baseContent']}}">

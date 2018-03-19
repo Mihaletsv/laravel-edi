@@ -32,6 +32,9 @@
                         <div class="panel-body menu">
                             Группы
                         </div>
+                        <div class="panel-body menu">
+                            Биллинг
+                        </div>
                     </div>
                 </div>
 

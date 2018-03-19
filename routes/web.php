@@ -30,7 +30,7 @@ Route::get('/home/doc/{file_id}/browse/true','FileHandlerController@onbrowsefile
 Route::get('/home/doc/{file_id}','FileController@displayfile')->name('displayfile');;;
 Route::post('/home/senddoc/{file_id}', 'DocController@onsenddoc')->name('senddoc');
 Route::post('/home/getpdf', 'DocController@ongetpdf')->name('getpdf');
-Route::post('/home/signdoc', 'DocController@onsign')->name('signdoc');
+Route::post('/home/signdoc', 'SignController@onsign')->name('signdoc');
 Route::post('/home/doc/getaccess', 'DocController@ongetaccess')->name('getaccess');
 Route::post('/home/createaccess/{file_id}', 'FileController@oncreateadmin')->name('createaccess');
 

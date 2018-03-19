@@ -7,7 +7,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Doc;
-use App\Sign;
+
 use Auth;
 use App\Http\Requests\SendDocRequest;
 use App\Helpers\DocHelper;
@@ -52,6 +52,7 @@ class DocController extends Controller
         //dd($this->sign_data);
         return view('doc',['file_id'=>$file_id,
                 'doc_id'=>$doc_id,
+                'doc_data'=>$doc,
                 'sign_data' => $this->sign_data]
         );
     }
@@ -77,7 +78,7 @@ class DocController extends Controller
         $data_row['file_id'] = $request->file_id;
         $data_row['sender_id'] = Auth::id();
         $data_row['recipient_id'] = $rec_id->id;
-        $data_row['varDocName'] = $this->filesTable->getDocById($docs['file_id'])['varFileName'];
+        $data_row['varDocName'] = File::findOrFail($docs['file_id'])->varFileName;
         $data_row['created_at'] = isset($created_at) ? $created_at : Carbon::now();
         $data_row['updated_at'] = Carbon::now();
         $data_row['sign_id'] = $sign_id;
@@ -114,42 +115,12 @@ class DocController extends Controller
     public function onGetPdf(Request $request)
     {
             $file_id = $request->intFileID;
-            $result = $this->filesTable->getDocById($file_id)->toArray();
+            $result = File::findOrFail($file_id)->toArray();
             echo json_encode($result);
             exit();
     }
 
-    /**
-     * @param Sign $sign
-     * @param Request $request
-     */
-    protected function onSign(Sign $sign, Request $request)
-    {
-        if (!empty($request->varDsign)) {
-            $sign->varSignBody = $request->varDsign;
-            $sign->save();
-        }
-        if ($sign->id) {
-            $doc = Doc::find($request->intDocID);
-            if (!is_object($doc) || empty($doc->sign_id) || !empty($doc->recipient_id)) {
-                $doc = new Doc;
-                $doc->file_id = $request->id;
-                $doc->sender_id = Auth::id();
-                $doc->varDocName = $request->varFileName;
-                $doc->created_at = date('Y-m-d H:i:s', time());
-                flash()->info('Документ создан и сохранен как черновик');
-            } else {
-                Sign::findOrFail($doc->sign_id)->delete();
-                flash()->warning('Документ обновлен: Старая подпись удалена!');
-                $doc->save();
-            }
-            $doc->sign_id = $sign->id;
-            $doc->save();
-            flash()->info('Документ подписан');
-            echo json_encode(route('displaydoc',['file_id'=>$doc->file_id,'doc_id'=>$doc->id]));
-            die;
-        }
-    }
+
 
 
 

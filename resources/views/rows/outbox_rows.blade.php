@@ -9,6 +9,6 @@
             Подписан
         @endif
     </td>
-    <td  class="lcol" title="дата отправки"></a>{{$doc->created_at->format('d.m.Y H:i:s')}}</td>
+    <td  class="lcol" title="дата отправки"></a>{{$doc->updated_at->format('d.m.Y H:i:s')}}</td>
 </tr>
 @endforeach

@@ -10,16 +10,17 @@ class File extends Model
     public function getDocsData($owner)
     {
         return self::select('id','user_id','varFileName','created_at')->
-        where('user_id',$owner)->get();
+        where('user_id',$owner)->latest('updated_at')->get();
     }
 
-    public function getDocById($id)
+/*    public function getDocById($id)
     {
         $file = self::findOrFail($id);
-/*        $file->created_at->addDays(8);
-        $file->created_at->diffForHumans();*/
+        $file->created_at->addDays(8);
+        $file->created_at->diffForHumans();
         return $file;
     }
+    */
 
     /**
      * An file is owned by a user
